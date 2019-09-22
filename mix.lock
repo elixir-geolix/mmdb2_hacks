@@ -1,0 +1,3 @@
+%{
+  "mmdb2_decoder": {:hex, :mmdb2_decoder, "1.1.0", "2e2347521bb3bf6b81b9ee58d3be2199cb68ea42dcbafcd0d8eb40214d2844cf", [:mix], [], "hexpm"},
+}
