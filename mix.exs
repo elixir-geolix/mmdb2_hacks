@@ -5,7 +5,7 @@ defmodule MMDB2Hacks.MixProject do
     [
       app: :mmdb2_hacks,
       version: "0.1.0-dev",
-      elixir: "~> 1.9",
+      elixir: "~> 1.10",
       deps: deps()
     ]
   end
