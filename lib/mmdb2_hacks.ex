@@ -3,8 +3,6 @@ defmodule MMDB2Hacks do
 
   use Bitwise, only_operators: true
 
-  @decode_options [double_precision: nil, float_precision: nil, map_keys: :strings]
-
   @doc """
   Extract all countries from a database.
   """
@@ -18,8 +16,8 @@ defmodule MMDB2Hacks do
     Range.new(0, byte_size(data) - 1)
     |> Enum.map(fn offset ->
       try do
-        data
-        |> MMDB2Decoder.Data.value(offset, @decode_options)
+        offset
+        |> MMDB2Decoder.lookup_pointer!(data)
         |> Map.take(["geoname_id", "iso_code", "names"])
       rescue
         _ -> nil

@@ -14,7 +14,7 @@ defmodule MMDB2Hacks.MixProject do
 
   defp deps do
     [
-      {:mmdb2_decoder, "~> 1.0"}
+      {:mmdb2_decoder, "~> 2.0"}
     ]
   end
 end
