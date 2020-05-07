@@ -43,7 +43,6 @@ defmodule MMDB2Hacks do
     tree
     |> tree_pointers_extract(meta.node_count, meta.record_size, [])
     |> Enum.uniq()
-    |> Enum.map(&(&1 - meta.node_count - 16))
   end
 
   defp tree_pointers_extract("", _, _, pointers), do: pointers
@@ -70,14 +69,14 @@ defmodule MMDB2Hacks do
 
     pointers =
       if pointer_left > node_count do
-        [pointer_left | pointers]
+        [pointer_left - node_count - 16 | pointers]
       else
         pointers
       end
 
     pointers =
       if pointer_right > node_count do
-        [pointer_right | pointers]
+        [pointer_right - node_count - 16 | pointers]
       else
         pointers
       end
