@@ -41,25 +41,32 @@ defmodule MMDB2Hacks do
       |> MMDB2Decoder.parse_database()
 
     tree
-    |> tree_pointers_extract(meta, [])
+    |> tree_pointers_extract(meta.node_count, meta.record_size, [])
     |> Enum.uniq()
     |> Enum.map(&(&1 - meta.node_count - 16))
   end
 
-  defp tree_pointers_extract("", _, pointers), do: pointers
+  defp tree_pointers_extract("", _, _, pointers), do: pointers
 
-  defp tree_pointers_extract(
-         tree,
-         %{node_count: node_count, record_size: record_size} = meta,
-         pointers
-       ) do
-    record_half = rem(record_size, 8)
-    record_left = record_size - record_half
+  defp tree_pointers_extract(tree, node_count, record_size, pointers) do
+    {pointer_left, pointer_right, rest} =
+      case record_size do
+        28 ->
+          record_half = rem(record_size, 8)
+          record_left = record_size - record_half
 
-    <<left_low::size(record_left), left_high::size(record_half), pointer_right::size(record_size),
-      rest::binary>> = tree
+          <<left_low::size(record_left), left_high::size(record_half), right::size(record_size),
+            rest::binary>> = tree
 
-    pointer_left = left_low + (left_high <<< record_left)
+          left = left_low + (left_high <<< record_left)
+
+          {left, right, rest}
+
+        _ ->
+          <<left::size(record_size), right::size(record_size), rest::binary>> = tree
+
+          {left, right, rest}
+      end
 
     pointers =
       if pointer_left > node_count do
@@ -75,6 +82,6 @@ defmodule MMDB2Hacks do
         pointers
       end
 
-    tree_pointers_extract(rest, meta, pointers)
+    tree_pointers_extract(rest, node_count, record_size, pointers)
   end
 end
