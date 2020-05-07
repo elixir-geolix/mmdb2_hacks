@@ -51,15 +51,9 @@ defmodule MMDB2Hacks do
     {pointer_left, pointer_right, rest} =
       case record_size do
         28 ->
-          record_half = rem(record_size, 8)
-          record_left = record_size - record_half
+          <<left_low::size(24), left_high::size(4), right::size(28), rest::binary>> = tree
 
-          <<left_low::size(record_left), left_high::size(record_half), right::size(record_size),
-            rest::binary>> = tree
-
-          left = left_low + (left_high <<< record_left)
-
-          {left, right, rest}
+          {left_low + (left_high <<< 24), right, rest}
 
         _ ->
           <<left::size(record_size), right::size(record_size), rest::binary>> = tree
